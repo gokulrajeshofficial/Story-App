@@ -2,13 +2,13 @@ const Story = require('../models/story.model');
 const Character = require('../models/character.model');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const openaiService = require('../services/openai.service');
+const openaiService = require('../services/openai.services');
 
 // @desc    Generate story with OpenAI
 // @route   POST /api/stories
 // @access  Private
 exports.generateStory = asyncHandler(async (req, res, next) => {
-  const { title, characters, storyType, additionalPrompt } = req.body;
+  const { title, characters, storyType, prompt } = req.body;
 
   if (!title || !characters || !storyType) {
     return next(new ErrorResponse('Please provide title, characters, and story type', 400));
@@ -45,7 +45,7 @@ exports.generateStory = asyncHandler(async (req, res, next) => {
     title,
     characterDetails,
     storyType,
-    additionalPrompt
+    prompt
   );
 
   // Generate story

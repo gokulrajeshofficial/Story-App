@@ -5,17 +5,16 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme/theme';
 import { ThemeProvider as CustomThemeProvider } from './context/ThemeContext';
 import { useTheme } from './context/ThemeContext';
+import { CharacterProvider } from './context/CharacterContext';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ChatInterface from './components/ChatInterface';
 import { useAuth } from './context/AuthContext';
-
-// Placeholder components for other routes
-const Profile = () => <div>Profile Page</div>;
-const Stories = () => <div>Stories Page</div>;
-const Characters = () => <div>Characters Page</div>;
+import Characters from './pages/Characters';
+import Stories from './pages/Stories';
+import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -93,7 +92,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <CustomThemeProvider>
-      <AppContent />
+      <CharacterProvider>
+        <AppContent />
+      </CharacterProvider>
     </CustomThemeProvider>
   );
 };

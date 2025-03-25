@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useCharacter } from '../context/CharacterContext';
 import {
   AppBar,
   Box,
@@ -15,6 +17,8 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  Chip,
+  Stack,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -33,16 +37,27 @@ const MainLayout = ({ children }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { selectedCharacter, clearSelectedCharacter } = useCharacter();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   const menuItems = [
     { text: 'Home', icon: <HomeIcon />, path: '/' },
-    { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
-    { text: 'Stories', icon: <StoryIcon />, path: '/stories' },
     { text: 'Characters', icon: <CharacterIcon />, path: '/characters' },
+    { text: 'Stories', icon: <StoryIcon />, path: '/stories' },
+    { text: 'Profile', icon: <PersonIcon />, path: '/profile' },
   ];
 
   const drawer = (
@@ -61,14 +76,6 @@ const MainLayout = ({ children }) => {
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => navigate('/logout')}>
-            <ListItemIcon>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </ListItem>
       </List>
     </div>
   );
@@ -93,10 +100,29 @@ const MainLayout = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Story App
-          </Typography>
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" noWrap component="div">
+              Story App
+            </Typography>
+            {selectedCharacter && (
+              <Chip
+                label={selectedCharacter.name}
+                onDelete={clearSelectedCharacter}
+                color="primary"
+                variant="outlined"
+                size="small"
+              />
+            )}
+          </Stack>
           <ThemeToggle />
+          <IconButton
+            color="inherit"
+            onClick={handleLogout}
+            sx={{ ml: 1 }}
+            aria-label="logout"
+          >
+            <LogoutIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box
@@ -113,10 +139,7 @@ const MainLayout = ({ children }) => {
             }}
             sx={{
               display: { xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
-                width: drawerWidth,
-              },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
             }}
           >
             {drawer}
@@ -126,10 +149,7 @@ const MainLayout = ({ children }) => {
             variant="permanent"
             sx={{
               display: { xs: 'none', sm: 'block' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
-                width: drawerWidth,
-              },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
             }}
             open
           >

@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       setUser({ ...user, token });
       return user;
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during login');
+      setError(err.response?.data?.error || 'An error occurred during login');
       throw err;
     } finally {
       setLoading(false);
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       setUser({ ...user, token });
       return user;
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during registration');
+      setError(err.response?.data?.error || 'An error occurred during registration');
       throw err;
     } finally {
       setLoading(false);

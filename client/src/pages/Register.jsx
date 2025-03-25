@@ -25,6 +25,7 @@ import {
   Lock as LockIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -67,7 +68,7 @@ const Register = () => {
         });
         navigate('/');
       } catch (err) {
-        // Error is handled by the AuthContext
+        console.log(err); 
       }
     },
   });
@@ -86,11 +87,38 @@ const Register = () => {
 
   return (
     <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex' }}>
+      {/* Add Theme Toggle in the top-right corner */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          zIndex: 1,
+        }}
+      >
+        <ThemeToggle />
+      </Box>
+
       <Grid container spacing={4} alignItems="center">
         {/* Left side - App Info */}
         <Grid item xs={12} md={6}>
           <Fade in timeout={1000}>
-            <Box sx={{ p: 4 }}>
+            <Box sx={{ 
+              p: 4,
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: (theme) => theme.palette.mode === 'dark' 
+                  ? 'linear-gradient(45deg, rgba(26, 26, 46, 0.7), rgba(42, 42, 62, 0.7))'
+                  : 'linear-gradient(45deg, rgba(248, 249, 255, 0.7), rgba(255, 255, 255, 0.7))',
+                zIndex: -1,
+              }
+            }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
                 <AIIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
                 <Typography variant="h3" component="h1" sx={{ fontWeight: 700 }}>
@@ -139,6 +167,10 @@ const Register = () => {
                 mx: 'auto',
                 position: 'relative',
                 overflow: 'hidden',
+                backdropFilter: 'blur(8px)',
+                background: (theme) => theme.palette.mode === 'dark'
+                  ? 'linear-gradient(135deg, rgba(42, 42, 62, 0.9), rgba(26, 26, 46, 0.9))'
+                  : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 255, 0.9))',
                 '&::before': {
                   content: '""',
                   position: 'absolute',
@@ -309,10 +341,16 @@ const BenefitCard = ({ icon, title, description }) => (
       gap: 2,
       p: 2,
       borderRadius: 2,
-      bgcolor: 'background.paper',
-      transition: 'transform 0.2s ease-in-out',
+      bgcolor: (theme) => theme.palette.mode === 'dark' 
+        ? 'rgba(42, 42, 62, 0.6)'
+        : 'rgba(255, 255, 255, 0.8)',
+      backdropFilter: 'blur(8px)',
+      transition: 'all 0.3s ease-in-out',
       '&:hover': {
         transform: 'translateX(8px)',
+        bgcolor: (theme) => theme.palette.mode === 'dark'
+          ? 'rgba(42, 42, 62, 0.8)'
+          : 'rgba(255, 255, 255, 0.9)',
       },
     }}
   >

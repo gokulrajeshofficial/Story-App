@@ -1,10 +1,14 @@
-const { Configuration, OpenAIApi } = require('openai');
+const OpenAI = require("openai") // ✅ Fix: Use .default for CommonJS
+const dotenv = require('dotenv');
 
-// Initialize OpenAI configuration
-const configuration = new Configuration({
+// Load environment variables
+dotenv.config();
+
+// Initialize OpenAI client
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
+
 
 /**
  * Construct a prompt for story generation
@@ -28,7 +32,7 @@ ${characterDetails}
 
 ${additionalPrompt ? `Additional instructions: ${additionalPrompt}` : ''}
 
-Write a creative, engaging, and coherent story that incorporates all the provided characters. The story should have a clear beginning, middle, and end, with character development and a satisfying conclusion.
+Write a creative, engaging, and coherent story that features all the provided characters in main roles, along with many fictional ones. The story should have a clear beginning, middle, and end, with strong character development and a satisfying conclusion.
 `;
 
   return prompt;
@@ -39,9 +43,9 @@ Write a creative, engaging, and coherent story that incorporates all the provide
  */
 exports.generateStory = async (promptText) => {
   try {
-    const response = await openai.createCompletion({
-      model: "text-davinci-003", // or newer model
-      prompt: promptText,
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini", // Use GPT-4 for better responses (or fallback to gpt-3.5-turbo)
+      messages: [{ role: "user", content: promptText }],
       max_tokens: 3000,
       temperature: 0.8,
       top_p: 1,
@@ -49,7 +53,7 @@ exports.generateStory = async (promptText) => {
       presence_penalty: 0.5
     });
 
-    return response.data.choices[0].text.trim();
+    return response.choices[0].message.content.trim();
   } catch (error) {
     console.error('OpenAI API error:', error);
     throw new Error('Failed to generate story with AI service');
